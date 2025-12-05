@@ -1,10 +1,13 @@
 import os
+
 import scipy.io as sio
 
 from self_py_fun.HW10Fun import *
+
 from sklearn.linear_model import LogisticRegression as LR
 from sklearn.svm import SVC
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+
 
 
 # In HW7, you have the chance to visualize a truncated EEG dataset stratified by
@@ -27,7 +30,7 @@ bp_low = 0.5
 bp_upp = 6
 electrode_num = 16
 # Change the following directory to your own one.
-parent_dir = '/Users/tma33/Library/CloudStorage/OneDrive-EmoryUniversity/Emory/Rollins SPH/2025/BIOS-584/python_proj'
+parent_dir = '/Users/tiyamikaw/Documents/GitHub/BIOS-584'
 parent_data_dir = '{}/data'.format(parent_dir)
 time_index = np.linspace(0, 800, 25)
 electrode_name_ls = ['F3', 'Fz', 'F4', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP3', 'CP4', 'P3', 'Pz', 'P4', 'PO7', 'PO8', 'Oz']
@@ -60,8 +63,22 @@ eeg_trn_type = np.squeeze(eeg_trn_type, axis=1)
 # eeg_frt_signal and eeg_frt_type
 # Write your own code below:
 
+frt_data_name = '{}_001_BCI_FRT_Truncated_Data_{}_{}'.format(subject_name, bp_low, bp_upp)
+frt_data_dir = '{}/{}.mat'.format(parent_data_dir, frt_data_name)
+eeg_frt_obj = sio.loadmat(frt_data_dir)
 
+# Print keys
+print(eeg_frt_obj.keys())
 
+# Extract Signal and Type
+eeg_frt_signal = eeg_frt_obj['Signal']
+print(eeg_frt_signal.shape)
+
+eeg_frt_type = eeg_frt_obj['Type']
+print(eeg_frt_type.shape)
+
+# Remove extra dimension from Type (same as training set)
+eeg_frt_type = np.squeeze(eeg_frt_type, axis=1)
 
 # You have completed the exploratory data analysis in HW7 and HW8.
 # The dataset has been carefully reviewed by Dr. Jane E. Huggins,
@@ -75,10 +92,13 @@ eeg_trn_type = np.squeeze(eeg_trn_type, axis=1)
 # You do not need to modify the parameters of each classifier
 # except for LogisticRegression: set max_iter=1000
 # Write your own code below:
+logistic_clf = LR(max_iter=1000)
+lda_clf = LDA()
+svm_clf = SVC(probability=True)
 
-
-
-
+logistic_clf.fit(eeg_trn_signal, eeg_trn_type)
+lda_clf.fit(eeg_trn_signal, eeg_trn_type)
+svm_clf.fit(eeg_trn_signal, eeg_trn_type)
 
 # Step 3: Evaluate model performance on both TRN and FRT files
 # Step 3.1: Prediction accuracy on TRN files
@@ -87,6 +107,7 @@ eeg_trn_type = np.squeeze(eeg_trn_type, axis=1)
 # You are asked to generate stimulus-level probability for each method on TRN files,
 # denoted as logistic_y_trn, lda_y_trn, and svm_y_trn.
 # Write your own code below:
+
 
 
 
